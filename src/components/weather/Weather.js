@@ -5,9 +5,10 @@ import { FaBars, FaMapMarkerAlt, FaSearch, FaCloud, FaSun, FaSnowflake, FaCloudR
 
 const Weather = () => {
   const [city, setCity] = useState('');
-  const [citySaved, setCitySaved] = useState('');
+  const [citySaved, setCitySaved] = useState(null);
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
+  const [smallErrorText, setSmallErrorText] = useState('');
 
   
   const handleFetchWeather = async (e) => {
@@ -24,19 +25,38 @@ const Weather = () => {
       setError(null);
     } catch (err){
       setError("City not found. Please try again");
+      setSmallErrorText("City not found");
       setWeather(null);
+      setCitySaved('');
     }
 
     setCitySaved(city);
 
   };
 
+  function SearchIconFunc(){
+    setCitySaved(null);
+  }
+
   return(
     <div className="container">
       <div className="topBar">
-          <FaBars /> {citySaved && !error ? citySaved  : "Search for your city"} <FaMapMarkerAlt />
+          <FaBars /> 
+          {citySaved && !error ? (
+  <p>{citySaved.toUpperCase()}</p>
+) : (
+  smallErrorText ? (
+    <p>{smallErrorText}</p>
+  ) : (
+    <p>Search</p>
+  )
+)}
+
+              
+          <FaSearch onClick={SearchIconFunc}/>
       </div>
       
+      {citySaved ? '' : 
       <div className="searchBar">
         <form onSubmit={handleFetchWeather}>
           <input
@@ -45,9 +65,9 @@ const Weather = () => {
             value = {city}
             onChange={(e) => setCity(e.target.value)} 
           />
-          <button type="submit">Get Weather</button>
+          <button type="submit"> <FaSearch /></button>
         </form>
-      </div>
+      </div>}
 
       {error && <p stle={{ color:'red'}}>{error}</p>}
 
